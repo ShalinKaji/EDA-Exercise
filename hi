@@ -63,3 +63,54 @@ suggested_metrics = {
 print("\nSuggested Metrics for Monitoring Sales Performance:")
 for metric, description in suggested_metrics.items():
     print(f"{metric}: {description}")
+
+# Convert the 'Date' column to datetime format for easier time-based analysis
+df['Date'] = pd.to_datetime(df['Date'])
+
+# Extract the year from the 'Date' column to analyze data on a yearly basis
+df['Year'] = df['Date'].dt.year
+
+# Calculate total sales and units sold, grouped by both year and product
+year_product_sales = df.groupby(['Year', 'Product'])['Total'].sum().reset_index()
+year_product_units = df.groupby(['Year', 'Product'])['Units'].sum().reset_index()
+
+# Determine which salespersons were involved in selling each product by year
+salesperson_product_sales = df.groupby(['Year', 'Product', 'Salesperson'])['Total'].sum().reset_index()
+
+# Visualize total sales for each product by year
+plt.figure(figsize=(12, 8))
+sns.barplot(x='Year', y='Total', hue='Product', data=year_product_sales)
+plt.title('Total Sales by Product for Each Year')
+plt.xlabel('Year')
+plt.ylabel('Total Sales ($)')
+plt.legend(title='Product', bbox_to_anchor=(1.05, 1), loc='upper left')
+plt.xticks(rotation=45)
+plt.show()
+
+# Visualize the number of units sold for each product by year
+plt.figure(figsize=(12, 8))
+sns.barplot(x='Year', y='Units', hue='Product', data=year_product_units)
+plt.title('Units Sold by Product for Each Year')
+plt.xlabel('Year')
+plt.ylabel('Units Sold')
+plt.legend(title='Product', bbox_to_anchor=(1.05, 1), loc='upper left')
+plt.xticks(rotation=45)
+plt.show()
+
+# Visualize which salespersons were responsible for selling each product by year
+plt.figure(figsize=(14, 10))
+sns.barplot(x='Year', y='Total', hue='Salesperson', data=salesperson_product_sales)
+plt.title('Sales by Salesperson for Each Product by Year')
+plt.xlabel('Year')
+plt.ylabel('Total Sales ($)')
+plt.legend(title='Salesperson', bbox_to_anchor=(1.05, 1), loc='upper left')
+plt.xticks(rotation=45)
+plt.show()
+
+# Print a summary of the sales data, broken down by product and year
+print("Sales by Product and Year:")
+print(year_product_sales)
+
+# Print a detailed breakdown of sales by product, year, and salesperson
+print("\nSales by Product, Year, and Salesperson:")
+print(salesperson_product_sales)
