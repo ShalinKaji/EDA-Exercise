@@ -1,1 +1,65 @@
-Hi!
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Load the data
+file_path = '/content/sales_data.csv'
+df = pd.read_csv(file_path)
+
+# Convert 'Date' column to datetime
+df['Date'] = pd.to_datetime(df['Date'])
+
+# Aggregate the sales data by month and year
+df['Month'] = df['Date'].dt.to_period('M')
+monthly_sales = df.groupby('Month')['Total'].sum().reset_index()
+
+# Plot total sales over time
+plt.figure(figsize=(24, 6))
+plt.plot(monthly_sales['Month'].astype(str), monthly_sales['Total'], marker='o')
+plt.title('Total Sales Over Time')
+plt.xlabel('Month')
+plt.ylabel('Total Sales ($)')
+plt.xticks(rotation=45)
+plt.grid(True)
+plt.show()
+
+# Analyze sales by product and salesperson
+product_sales = df.groupby('Product')['Total'].sum().reset_index()
+salesperson_sales = df.groupby('Salesperson')['Total'].sum().reset_index()
+
+# Plot sales by product
+plt.figure(figsize=(10, 6))
+plt.barh(product_sales['Product'], product_sales['Total'], color='skyblue')
+plt.title('Total Sales by Product')
+plt.xlabel('Total Sales ($)')
+plt.ylabel('Product')
+plt.show()
+
+# Plot sales by salesperson
+plt.figure(figsize=(10, 6))
+plt.barh(salesperson_sales['Salesperson'], salesperson_sales['Total'], color='lightgreen')
+plt.title('Total Sales by Salesperson')
+plt.xlabel('Total Sales ($)')
+plt.ylabel('Salesperson')
+plt.show()
+
+# Additional analysis - January 2022
+jan_2022_sales = df[(df['Date'].dt.year == 2022) & (df['Date'].dt.month == 1)]
+print("Total Sales in January 2022: $", jan_2022_sales['Total'].sum())
+
+# Written analysis
+# Compare January 2022 with previous months and years
+jan_sales_by_year = df[df['Date'].dt.month == 1].groupby(df['Date'].dt.year)['Total'].sum()
+print("\nJanuary Sales Comparison by Year:")
+print(jan_sales_by_year)
+
+# Suggestions for metrics to monitor sales performance
+suggested_metrics = {
+    "Monthly Sales Growth Rate": "Percentage increase or decrease in sales compared to the previous month.",
+    "Sales by Product Category": "Monitor sales performance of different product categories.",
+    "Sales Conversion Rate": "Ratio of the number of sales to the number of leads generated."
+}
+
+print("\nSuggested Metrics for Monitoring Sales Performance:")
+for metric, description in suggested_metrics.items():
+    print(f"{metric}: {description}")
