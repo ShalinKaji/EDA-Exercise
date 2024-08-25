@@ -117,6 +117,8 @@ print(salesperson_product_sales)
 
 ###################################################################
 
+import seaborn as sns
+
 # Convert the 'Date' column to datetime format for easier time-based analysis
 df['Date'] = pd.to_datetime(df['Date'])
 
