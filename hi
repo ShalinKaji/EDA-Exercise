@@ -114,3 +114,56 @@ print(year_product_sales)
 # Print a detailed breakdown of sales by product, year, and salesperson
 print("\nSales by Product, Year, and Salesperson:")
 print(salesperson_product_sales)
+
+###################################################################
+
+# Convert the 'Date' column to datetime format for easier time-based analysis
+df['Date'] = pd.to_datetime(df['Date'])
+
+# Extract the year from the 'Date' column to analyze data on a yearly basis
+df['Year'] = df['Date'].dt.year
+
+# Calculate total sales and units sold, grouped by both year and product
+year_product_sales = df.groupby(['Year', 'Product'])['Total'].sum().reset_index()
+year_product_units = df.groupby(['Year', 'Product'])['Units'].sum().reset_index()
+
+# Determine which salespersons were involved in selling each product by year
+salesperson_product_sales = df.groupby(['Year', 'Product', 'Salesperson'])['Total'].sum().reset_index()
+
+# Visualize total sales for each product by year
+fig, ax = plt.subplots(figsize=(12, 8))
+sns.barplot(x='Year', y='Total', hue='Product', data=year_product_sales, ax=ax)
+ax.set_title('Total Sales by Product for Each Year')
+ax.set_xlabel('Year')
+ax.set_ylabel('Total Sales ($)')
+ax.legend(title='Product', bbox_to_anchor=(1.05, 1), loc='upper left')
+ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
+display_fig(fig, "Total Sales by Product for Each Year")
+
+# Visualize the number of units sold for each product by year
+fig, ax = plt.subplots(figsize=(12, 8))
+sns.barplot(x='Year', y='Units', hue='Product', data=year_product_units, ax=ax)
+ax.set_title('Units Sold by Product for Each Year')
+ax.set_xlabel('Year')
+ax.set_ylabel('Units Sold')
+ax.legend(title='Product', bbox_to_anchor=(1.05, 1), loc='upper left')
+ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
+display_fig(fig, "Units Sold by Product for Each Year")
+
+# Visualize which salespersons were responsible for selling each product by year
+fig, ax = plt.subplots(figsize=(14, 10))
+sns.barplot(x='Year', y='Total', hue='Salesperson', data=salesperson_product_sales, ax=ax)
+ax.set_title('Sales by Salesperson for Each Product by Year')
+ax.set_xlabel('Year')
+ax.set_ylabel('Total Sales ($)')
+ax.legend(title='Salesperson', bbox_to_anchor=(1.05, 1), loc='upper left')
+ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
+display_fig(fig, "Sales by Salesperson for Each Product by Year")
+
+# Analysis Summary
+print("Sales by Product and Year:")
+print(year_product_sales)
+
+# Print a detailed breakdown of sales by product, year, and salesperson
+print("\nSales by Product, Year, and Salesperson:")
+print(salesperson_product_sales)
